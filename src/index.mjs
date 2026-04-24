@@ -6,6 +6,13 @@ const PORT = 5001;
 
 // Middlewares
 app.use(express.json())
+
+const logginMiddlewaare = (req, res, next) => {
+    console.log(`${req.method} - ${req.url}`)
+    next();
+}
+
+// Data
 const mockUsers = [
     {id: 1, userName: "john", displayName: "John"},
     {id: 2, userName: "mark", displayName: "Mark"},
@@ -14,6 +21,12 @@ const mockUsers = [
 
 app.get("/", (req,res) => {
     res.send("Hello World !")
+})
+
+// Api endpoint with middelware
+app.get("/api/midd", logginMiddlewaare,(req, res) => {
+    res.send("Hello World")
+    console.log("Inside the main endpoint !")
 })
 
 
