@@ -48,9 +48,12 @@ app.get("/api/users", (req, res) => {
 })
 
 // Post request
-app.post("/api/users", (req, res) => {
-    console.log(req.body)
-    return res.status(200).send(req.body)
+app.post("/api/users", (req, res) => {  
+    const newUser = {id: mockUsers[mockUsers.length - 1].id + 1, ...req.body}
+    mockUsers.push(newUser);
+    return res.status(201).json(newUser)
+    // console.log(req.body)
+    // return res.status(200).send(req.body)
 })
 
 app.listen(PORT, () => console.log(`Server has started at http://localhost:${PORT}`))
