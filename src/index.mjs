@@ -95,6 +95,19 @@ app.patch("/api/users/:id", (req, res) => {
     return res.sendStatus(204);
 })
 
+// Delete request Method
+app.delete("/api/users/:id", (req, res)=> {
+    const {params: {id}} = req;
+    const parsedId = parseInt(id);
+    if(isNaN(parsedId)) return res.statusCode(400);
+    const findUserIndex = mockUsers.findIndex((user) => user.id == parsedId);
+    if(findUserIndex == -1) return res.status(404).json({msg: "User Not found !"});
+    // This splice is the function used to delete the value as the integer 1 refers to the deleteCount 
+    // If the delete cound not specified then it will del all the records after findUserIndex
+    mockUsers.splice(findUserIndex, 1);
+    return res.sendStatus(200)
+})
+
 
 app.listen(PORT, () => console.log(`Server has started at http://localhost:${PORT}`))
 
