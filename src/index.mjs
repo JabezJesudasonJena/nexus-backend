@@ -3,6 +3,9 @@ import express from 'express';
 const app = express();
 const PORT = 5001;
 
+
+// Middlewares
+app.use(express.json())
 const mockUsers = [
     {id: 1, userName: "john", displayName: "John"},
     {id: 2, userName: "mark", displayName: "Mark"},
@@ -44,7 +47,11 @@ app.get("/api/users", (req, res) => {
     res.send(mockUsers);
 })
 
-
+// Post request
+app.post("/api/users", (req, res) => {
+    console.log(req.body)
+    return res.status(200).send(req.body)
+})
 
 app.listen(PORT, () => console.log(`Server has started at http://localhost:${PORT}`))
 
