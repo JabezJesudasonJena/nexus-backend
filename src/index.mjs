@@ -1,0 +1,25 @@
+import express from 'express';
+
+const app = express();
+const PORT = 5001;
+
+
+
+
+
+
+
+app.get("/", (req,res) => {
+    res.send("Hello World !")
+})
+
+
+
+
+
+
+
+
+app.listen(PORT, () => console.log(`Server has started at http://localhost:${PORT}`))
+
+
