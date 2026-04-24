@@ -12,6 +12,16 @@ const logginMiddlewaare = (req, res, next) => {
     next();
 }
 
+const resolveIndexByUserId = (req, res, next) => {
+    const {body, params: {id}} = req;
+    const parsedId = parseInt(id);
+    if(isNaN(parsedId)) return res.sendStatus(400);
+    const findUserIndex = mockUsers.findIndex((user) => user.id == parsedId)
+    if(findUserIndex == -1) return res.sendStatus(400);
+    req.findUserIndex = findUserIndex
+    next();
+}
+
 // Data
 const mockUsers = [
     {id: 1, userName: "john", displayName: "John"},
@@ -27,6 +37,15 @@ app.get("/", (req,res) => {
 app.get("/api/midd", logginMiddlewaare,(req, res) => {
     res.send("Hello World")
     console.log("Inside the main endpoint !")
+})
+
+//By using resolve middleware 
+app.get("/api/user/:id", resolveIndexByUserId, (req, res) => {
+    const  { findUserIndex} = req;
+    console.log(findUserIndex)
+    res.status(200).json({user: mockUsers[findUserIndex]})
+    // const findUser = mockUsers.find((user) => user.id == findUserIndex + 1);
+    // return res.status(200).json({user : findUser});
 })
 
 
@@ -121,6 +140,12 @@ app.delete("/api/users/:id", (req, res)=> {
     return res.sendStatus(200)
 })
 
+
+app.put("/api/users/put/:id",resolveIndexByUserId, (req, res) => {
+    const {body, findUserIndex} = req;
+    mockUsers[findUserIndex] = {id: mockUsers[findUserIndex].id, ...body};
+    res.status(204).json({msg: "user updated"})
+})
 
 app.listen(PORT, () => console.log(`Server has started at http://localhost:${PORT}`))
 
