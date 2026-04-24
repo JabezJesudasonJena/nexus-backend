@@ -62,13 +62,13 @@ app.put("/api/users/:id", (req, res) => {
     // This will destructrize the req and extract body and id
     const {body, params: {id}} = req;
     // This will convert the id which is in string into int
-    const parsedId = Number.parseInt(id);
+    const parsedId = parseInt(id);
     // This will check that if the id is valid 
         // eg error 
             // passing PUT /api/users/done or PUT /api/users/stringvalue
     // This if will handle if any of the error above satisfies
-    if(!isNaN(parsedId)){
-        return res.sendStatus(400)
+    if(isNaN(parsedId)){
+        return res.sendStatus(400).send(parsedId)
     }
     // this will return the index of the data v r going to change
     const findUserIndex = mockUsers.findIndex(
@@ -78,7 +78,21 @@ app.put("/api/users/:id", (req, res) => {
     if(findUserIndex == -1) return res.sendStatus(404); 
     // Here the data in the users is been edited and returned as 204 refering of succcess edit of the data
     mockUsers[findUserIndex] = {id : parsedId, ...body};
-    return res.sendStatus(204).json(mockUsers[findUserIndex]);
+    return res.status(204).json(mockUsers[findUserIndex]);
+})
+
+// Patch request
+// Used to update the partial portion of data
+app.patch("/api/users/:id", (req, res) => {
+    const {body, params: {id}} = req
+    const parsedId = parseInt(id);
+    if(isNaN(parsedId)) return res.status(400).json({msg: "id fault", id: parsedId})
+    const findUserIndex = mockUsers.findIndex((user) => user.id == parsedId);
+    if(findUserIndex == -1) return res.status(404).json({msg: "The user does not exit"})
+    // Here as in the patch request it makes the other values which r not passed in the body in the same but modifying add adding
+    // and adding the value given in body
+    mockUsers[findUserIndex] = {...mockUsers[findUserIndex], ...body}
+    return res.sendStatus(204);
 })
 
 
