@@ -58,7 +58,10 @@ app.post("/api/auth",(req, res) => {
     return res.status(200).send(findUser)
 })
 
-
+app.get("/api/auth/status", (req, res) => {
+    if(!req.session.user) return res.status(400).send("No User Object")
+    res.status(200).json({msg: "User exists", userId: req.session})
+})
 
 
 app.listen(PORT, () =>
