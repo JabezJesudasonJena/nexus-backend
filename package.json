@@ -5,15 +5,16 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev" : "nodemon src/server.js",
-    "mod" : "nodemon src/index.mjs"
+    "dev": "nodemon src/server.js",
+    "mod": "nodemon src/index.mjs"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "module",
   "dependencies": {
-    "express": "^5.2.1"
+    "express": "^5.2.1",
+    "express-validator": "^7.3.2"
   },
   "devDependencies": {
     "nodemon": "^3.1.14"
