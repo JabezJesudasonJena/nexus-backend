@@ -2,6 +2,7 @@ import express from "express";
 import routes from "./routes/index.mjs";
 import cookieParser from "cookie-parser";
 import session from "express-session";
+import { passUsers } from "./utils/constants.mjs";
 
 const app = express();
 const PORT = 5001;
@@ -24,7 +25,7 @@ app.use(
     saveUninitialized: false,   // it does not create a session until data is inserted
     resave: false,              // it does not save resave changes
     cookie: {
-      maxAge: 6000 * 2,
+      maxAge: 60000 * 2,
 
     }
   })
@@ -47,6 +48,17 @@ app.get("/", (req, res) => {
     res.cookie('hello', 'world', {maxAge: 6000, signed: true});
     res.send("Hello World !");
 });
+
+app.post("/api/auth",(req, res) => {
+    const {userName, password} = req.body;
+    const findUser = passUsers.find((user) => user.userName == userName);
+    if (!findUser || findUser.password != password) return res.status(401).json({msg: "Bad Credentials"});
+
+    req.session.user = findUser;
+    return res.status(200).send(findUser)
+})
+
+
 
 
 app.listen(PORT, () =>
