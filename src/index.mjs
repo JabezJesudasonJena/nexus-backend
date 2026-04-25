@@ -1,4 +1,4 @@
-import express from "express";
+import express, { request } from "express";
 import routes from "./routes/index.mjs";
 import cookieParser from "cookie-parser";
 import session from "express-session";
@@ -25,7 +25,7 @@ app.use(
     saveUninitialized: false,   // it does not create a session until data is inserted
     resave: false,              // it does not save resave changes
     cookie: {
-      maxAge: 60000 * 2,
+      maxAge: 60000 * 10,
 
     }
   })
@@ -49,18 +49,64 @@ app.get("/", (req, res) => {
     res.send("Hello World !");
 });
 
+/*  
+    Sessions
+        in POST /api/auth
+            Crediantials has been checked
+            if true
+                the data {id, userName, password} is stored to req.session.user
+                meaning the id of this cookie which is stored inside server is been placed inside client's browser
+            if false
+                it returns a 404 Bad credentials request
+        in GET /api/auth/status
+            it checks the cookie which contains the id of the session of user which is stored
+            if cookie exists
+                sessionStore
+                    it gets the data stored in sesion || server
+                    and logs the result 
+                if condition
+                    it checks the existense of the user object inside session of server
+*/
+
 app.post("/api/auth",(req, res) => {
     const {userName, password} = req.body;
     const findUser = passUsers.find((user) => user.userName == userName);
     if (!findUser || findUser.password != password) return res.status(401).json({msg: "Bad Credentials"});
-
+    // Here the user is stored inside session
     req.session.user = findUser;
     return res.status(200).send(findUser)
 })
 
 app.get("/api/auth/status", (req, res) => {
+    req.sessionStore.get(req.session.id, (err, data) => {
+        if(err){
+            console.log(err); throw err;
+        }
+        console.log(data)
+    })
     if(!req.session.user) return res.status(400).send("No User Object")
-    res.status(200).json({msg: "User exists", userId: req.session})
+    // Here by req.session.id the data is retrived from the server
+    res.status(200).json(req.session.user)
+})
+
+
+// POST cart endpoint to check add authed route
+app.post("/api/cart", (req, res) => {
+    if (!req.session.user) return res.sendStatus(401);
+    const {item} = req.body;
+    console.log(item)
+    const {cart} = req.session;
+    if (cart) {
+        cart.push(item);
+    } else {
+        req.session.cart = [item];
+    }
+    return res.status(201).send(item)
+})
+
+app.get("/api/cart", (req, res) => {
+    if(!req.session.user) return res.sendStatus(401);
+    return res.send(req.session.cart ?? []);
 })
 
 
