@@ -16,7 +16,8 @@ app.use(routes);
 
 // Default Route
 app.get("/", (req, res) => {
-  res.send("Hello World !");
+    res.cookie('Hello', 'World', {maxAge: 60000})
+    res.send("Hello World !");
 });
 
 
