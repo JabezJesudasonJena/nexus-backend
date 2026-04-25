@@ -1,5 +1,6 @@
 import express from "express";
-import { query, validationResult, body, matchedData } from "express-validator";
+import { query, validationResult, body, matchedData, checkSchema } from "express-validator";
+import { createUserValidationSchema} from './utils/validationSchemas.mjs'
 
 const app = express();
 const PORT = 5001;
@@ -111,14 +112,13 @@ app.get(
 */
 app.post(
     "/api/users",
-    body('userName')
-        .notEmpty().withMessage('UserName cannot be empty')
-        .isLength({min: 5, max: 32}).withMessage('UserName must be 5 character with the max of 32 characters')
-        .isString().withMessage('UserName must be in String'),
-    body('displayName')
-        .notEmpty().withMessage("The Display name should not be empty")
-        .isLength({min: 4, max: 32}).withMessage('Display Name should be of 4 to 32 characters')
-        .isString().withMessage('Display Name should be of a String'),
+    /*
+        checkSchema
+            inside this v can pass a Schema where all the 
+            methods and the checks has to be performed
+            check ./utils/validationSchemas.mjs for reference
+    */
+    checkSchema(createUserValidationSchema),
     (req, res) => { 
         const result = validationResult(req);
         /*
