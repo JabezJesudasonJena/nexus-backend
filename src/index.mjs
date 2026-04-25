@@ -1,5 +1,5 @@
 import express from "express";
-import { query, validationResult, body } from "express-validator";
+import { query, validationResult, body, matchedData } from "express-validator";
 
 const app = express();
 const PORT = 5001;
@@ -47,8 +47,6 @@ app.get("/api/user/:id", resolveIndexByUserId, (req, res) => {
   const { findUserIndex } = req;
   console.log(findUserIndex);
   res.status(200).json({ user: mockUsers[findUserIndex] });
-  // const findUser = mockUsers.find((user) => user.id == findUserIndex + 1);
-  // return res.status(200).json({user : findUser});
 });
 
 // Request params
@@ -78,14 +76,12 @@ app.get(
     const result = validationResult(req);
     // Validation of the results
     console.log(result);
-    // console.log(req['express-validator#contexts']);
-    //console.log(req.query);
     const {
       query: { filter, value },
     } = req;
     // when filter and value are undefined
     if (!filter && !value) {
-      return res.json({ users: mockUsers, msg: "No filter, value in " });
+      return res.json({ users: mockUsers, msg: "No filter, value in queries" });
     }
     if (filter && value)
       return res.json(mockUsers.filter((user) => user[filter].includes(value)));
@@ -94,14 +90,51 @@ app.get(
 );
 
 // Post request
+/* 
+    Express validator
+        By using the body from the request object 
+        it is extracting the userName and checking for the conditions i have provided if anyone of the conditions does not satisfy
+        the result will catch it 
+        eg :
+            Result {
+                formatter: [Function: formatter],
+                errors: [
+                    {
+                    type: 'field',
+                    value: 'test',
+                    msg: 'UserName must be 5 character with the max of 32 characters',
+                    path: 'userName',
+                    location: 'body'
+                    }
+                ]
+            }
+*/
 app.post(
-    "/api/users", 
-    (req, res) => {
-    const newUser = { id: mockUsers[mockUsers.length - 1].id + 1, ...req.body };
-    mockUsers.push(newUser);
-    return res.status(201).json(newUser);
-    // console.log(req.body)
-    // return res.status(200).send(req.body)
+    "/api/users",
+    body('userName')
+        .notEmpty().withMessage('UserName cannot be empty')
+        .isLength({min: 5, max: 32}).withMessage('UserName must be 5 character with the max of 32 characters')
+        .isString().withMessage('UserName must be in String'),
+    body('displayName')
+        .notEmpty().withMessage("The Display name should not be empty")
+        .isLength({min: 4, max: 32}).withMessage('Display Name should be of 4 to 32 characters')
+        .isString().withMessage('Display Name should be of a String'),
+    (req, res) => { 
+        const result = validationResult(req);
+        /*
+            This will check that if there are no errors
+            isEmptyy() checks that if the result has erorr or not if os it satisfies
+            .array() it gets the validation results in array....
+        */
+        if(!result.isEmpty()){
+            return res.status(400).json({result: result.array()})
+        }
+        const data = matchedData(req);
+        console.log(data)
+        // console.log(result) // logs the result
+        const newUser = { id: mockUsers[mockUsers.length - 1].id + 1, ...data };
+        mockUsers.push(newUser);
+        return res.status(201).json(newUser);
 });
 
 // Put request
