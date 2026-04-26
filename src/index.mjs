@@ -46,15 +46,12 @@ app.use(routes);
 
 // Default Route
 app.get("/", (req, res) => {
-<<<<<<< HEAD
     res.cookie('Hello', 'World', {maxAge: 60000})
-=======
     console.log(req.session);
     console.log(req.session.id);
     req.session.visited = true;
     req.session.userId = 123;
     res.cookie('hello', 'world', {maxAge: 6000, signed: true});
->>>>>>> b13104338b5da5fbde2c8c6879ba73f581e330b9
     res.send("Hello World !");
 });
 
