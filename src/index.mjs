@@ -3,6 +3,8 @@ import routes from "./routes/index.mjs";
 import cookieParser from "cookie-parser";
 import session from "express-session";
 import { passUsers } from "./utils/constants.mjs";
+import passport from "passport";
+import "./strategies/local-startegy.mjs"
 
 const app = express();
 const PORT = 5001;
@@ -34,8 +36,11 @@ app.use(
     Here the route file is used to use it v have to use .use function which
     means it will use the routes in the router -> ./routes/users.mjs
     the first argument refers the route where the routes will land
-
 */
+
+app.use(passport.initialize());     // This is to initialize the passport for incoming requests
+app.use(passport.session());
+
 app.use(routes);
 
 
@@ -48,6 +53,10 @@ app.get("/", (req, res) => {
     res.cookie('hello', 'world', {maxAge: 6000, signed: true});
     res.send("Hello World !");
 });
+
+app.post('/api/auth/post',passport.authenticate("local"),(req, res)=>{
+
+})
 
 /*  
     Sessions
@@ -108,6 +117,8 @@ app.get("/api/cart", (req, res) => {
     if(!req.session.user) return res.sendStatus(401);
     return res.send(req.session.cart ?? []);
 })
+
+
 
 
 app.listen(PORT, () =>
