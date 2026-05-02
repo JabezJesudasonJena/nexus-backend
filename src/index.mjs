@@ -39,7 +39,7 @@ app.use(
 */
 
 app.use(passport.initialize());     // This is to initialize the passport for incoming requests
-app.use(passport.session());
+app.use(passport.session());        // This is to store password in sessions
 
 app.use(routes);
 
@@ -55,8 +55,22 @@ app.get("/", (req, res) => {
     res.send("Hello World !");
 });
 
-app.post('/api/auth/post',passport.authenticate("local"),(req, res)=>{
+/*
+    Passport js
+        Statergy
+            It contains the logic of verification of the AUTH
+        
+*/
 
+app.post('/api/auth/post',passport.authenticate("local"),(req, res)=>{
+    res.json({msg : "success"})
+})
+
+app.get('/api/auth/status/passport', (req, res ) => {
+    console.log("Inside /api/auth/status/passport endpoint");
+    console.log(req.user);
+    if(!req.user) return res.status(404).json({msg : "No user found in req body"});
+    res.status(200).json({msg : "User logged in"})
 })
 
 /*  
