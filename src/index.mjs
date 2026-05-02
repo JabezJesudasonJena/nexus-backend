@@ -66,6 +66,15 @@ app.post('/api/auth/post',passport.authenticate("local"),(req, res)=>{
     res.json({msg : "success"})
 })
 
+app.post('/api/auth/logout', (req, res) => {
+    if (!req.user) return res.status(401).json({msg: "User is not present"});
+    req.logOut((err) => {
+        if (err) return res.status(400).json({Error: err});
+        res.status(200).json({msg: "Logout succesful !"});
+    })
+
+})
+
 app.get('/api/auth/status/passport', (req, res ) => {
     console.log("Inside /api/auth/status/passport endpoint");
     console.log(req.user);
