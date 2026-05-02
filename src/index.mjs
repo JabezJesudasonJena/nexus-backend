@@ -69,6 +69,7 @@ app.post('/api/auth/post',passport.authenticate("local"),(req, res)=>{
 app.get('/api/auth/status/passport', (req, res ) => {
     console.log("Inside /api/auth/status/passport endpoint");
     console.log(req.user);
+    console.log(req.session)
     if(!req.user) return res.status(404).json({msg : "No user found in req body"});
     res.status(200).json({msg : "User logged in"})
 })
