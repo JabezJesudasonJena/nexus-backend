@@ -52,4 +52,4 @@ jobs:
           app-name: 'nexusbackend'
           slot-name: 'Production'
           package: .
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_ADCA13151856438BB46499C70C17A5B7 }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_B99F725EA1E844BEB389E8F76A9BED3C }}
