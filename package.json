@@ -7,7 +7,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon src/server.js",
     "mod": "nodemon src/index.mjs --quiet", 
-    "start" : "node src/index.js"
+    "start" : "node src/index.js",
+    "test": "echo "No tests yet""
   },
   "keywords": [],
   "author": "",
